@@ -4,12 +4,12 @@ from homeassistant.helpers import selector
 from homeassistant.helpers.entity_registry import async_get as async_get_entity_registry
 
 from .const import (
-    DOMAIN,
     CONF_SOURCE_ENTITY,
     CONF_TARGET_VALUE,
     CONF_TIME_WINDOW,
     DEFAULT_TARGET_VALUE,
     DEFAULT_TIME_WINDOW,
+    DOMAIN,
 )
 
 
@@ -19,22 +19,16 @@ def _build_schema(defaults: dict) -> vol.Schema:
             vol.Required(
                 CONF_SOURCE_ENTITY,
                 default=defaults.get(CONF_SOURCE_ENTITY),
-            ): selector.EntitySelector(
-                selector.EntitySelectorConfig(domain=["sensor", "input_number"])
-            ),
+            ): selector.EntitySelector(selector.EntitySelectorConfig(domain=["sensor", "input_number"])),
             vol.Required(
                 CONF_TARGET_VALUE,
                 default=defaults.get(CONF_TARGET_VALUE, DEFAULT_TARGET_VALUE),
-            ): selector.NumberSelector(
-                selector.NumberSelectorConfig(mode="box", step=0.1)
-            ),
+            ): selector.NumberSelector(selector.NumberSelectorConfig(mode="box", step=0.1)),
             vol.Required(
                 CONF_TIME_WINDOW,
                 default=defaults.get(CONF_TIME_WINDOW, DEFAULT_TIME_WINDOW),
             ): selector.NumberSelector(
-                selector.NumberSelectorConfig(
-                    min=5, max=1440, step=5, unit_of_measurement="min", mode="slider"
-                )
+                selector.NumberSelectorConfig(min=5, max=1440, step=5, unit_of_measurement="min", mode="slider")
             ),
         }
     )
@@ -78,7 +72,5 @@ class TrendPredictorOptionsFlow(config_entries.OptionsFlow):
 
         return self.async_show_form(
             step_id="init",
-            data_schema=_build_schema(
-                {**self._config_entry.data, **self._config_entry.options}
-            ),
+            data_schema=_build_schema({**self._config_entry.data, **self._config_entry.options}),
         )

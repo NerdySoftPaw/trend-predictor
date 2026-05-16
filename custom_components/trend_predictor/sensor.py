@@ -1,6 +1,6 @@
+import logging
 from collections import deque
 from datetime import timedelta
-import logging
 
 from homeassistant.components.recorder import get_instance
 from homeassistant.components.recorder.history import get_significant_states
@@ -12,14 +12,12 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.event import async_track_state_change_event
 from homeassistant.util import dt as dt_util
 
-from .const import DOMAIN, CONF_SOURCE_ENTITY, CONF_TARGET_VALUE, CONF_TIME_WINDOW
+from .const import CONF_SOURCE_ENTITY, CONF_TARGET_VALUE, CONF_TIME_WINDOW, DOMAIN
 
 _LOGGER = logging.getLogger(__name__)
 
 
-async def async_setup_entry(
-    hass: HomeAssistant, entry: ConfigEntry, async_add_entities: AddEntitiesCallback
-) -> None:
+async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_entities: AddEntitiesCallback) -> None:
     config = {**entry.data, **entry.options}
     source_entity = config[CONF_SOURCE_ENTITY]
     target_value = float(config[CONF_TARGET_VALUE])
@@ -75,9 +73,7 @@ class TrendPredictorData:
         except Exception as err:
             _LOGGER.debug("Could not pre-load history from recorder: %s", err)
 
-        self._unsubscribe = async_track_state_change_event(
-            self.hass, [self.source_entity], self._on_state_change
-        )
+        self._unsubscribe = async_track_state_change_event(self.hass, [self.source_entity], self._on_state_change)
         self._recalculate()
 
     def async_stop(self):
