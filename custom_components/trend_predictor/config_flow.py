@@ -4,10 +4,12 @@ from homeassistant.helpers import selector
 from homeassistant.helpers.entity_registry import async_get as async_get_entity_registry
 
 from .const import (
+    CONF_MAX_VALUE,
+    CONF_MIN_VALUE,
     CONF_SOURCE_ENTITY,
-    CONF_TARGET_VALUE,
     CONF_TIME_WINDOW,
-    DEFAULT_TARGET_VALUE,
+    DEFAULT_MAX_VALUE,
+    DEFAULT_MIN_VALUE,
     DEFAULT_TIME_WINDOW,
     DOMAIN,
 )
@@ -21,8 +23,12 @@ def _build_schema(defaults: dict) -> vol.Schema:
                 default=defaults.get(CONF_SOURCE_ENTITY),
             ): selector.EntitySelector(selector.EntitySelectorConfig(domain=["sensor", "input_number"])),
             vol.Required(
-                CONF_TARGET_VALUE,
-                default=defaults.get(CONF_TARGET_VALUE, DEFAULT_TARGET_VALUE),
+                CONF_MIN_VALUE,
+                default=defaults.get(CONF_MIN_VALUE, DEFAULT_MIN_VALUE),
+            ): selector.NumberSelector(selector.NumberSelectorConfig(mode="box", step=0.1)),
+            vol.Required(
+                CONF_MAX_VALUE,
+                default=defaults.get(CONF_MAX_VALUE, DEFAULT_MAX_VALUE),
             ): selector.NumberSelector(selector.NumberSelectorConfig(mode="box", step=0.1)),
             vol.Required(
                 CONF_TIME_WINDOW,
@@ -46,9 +52,11 @@ class TrendPredictorConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             er = async_get_entity_registry(self.hass)
             entry = er.async_get(entity_id)
             name = entry.name or entry.original_name if entry else entity_id
+            min_v = user_input[CONF_MIN_VALUE]
+            max_v = user_input[CONF_MAX_VALUE]
 
             return self.async_create_entry(
-                title=f"{name} → {user_input[CONF_TARGET_VALUE]}",
+                title=f"{name} ({min_v}–{max_v})",
                 data=user_input,
             )
 

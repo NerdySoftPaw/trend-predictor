@@ -3,15 +3,17 @@
     "step": {
       "user": {
         "title": "Set up Trend Predictor",
-        "description": "Select a numeric entity and specify which target value to predict.",
+        "description": "Select a numeric entity. The sensor automatically detects whether the value is rising or falling and picks the appropriate target.",
         "data": {
           "source_entity": "Source entity",
-          "target_value": "Target value",
+          "min_value": "Minimum value",
+          "max_value": "Maximum value",
           "time_window": "Time window"
         },
         "data_description": {
           "source_entity": "Numeric sensor to analyse (e.g. battery state of charge)",
-          "target_value": "Value to predict (e.g. 0 for empty, 100 for full)",
+          "min_value": "Lower bound — targeted when the trend is falling (e.g. 0 for empty)",
+          "max_value": "Upper bound — targeted when the trend is rising (e.g. 100 for full)",
           "time_window": "How many minutes of history to use for regression"
         }
       }
@@ -29,12 +31,14 @@
         "title": "Reconfigure Trend Predictor",
         "data": {
           "source_entity": "Source entity",
-          "target_value": "Target value",
+          "min_value": "Minimum value",
+          "max_value": "Maximum value",
           "time_window": "Time window"
         },
         "data_description": {
           "source_entity": "Numeric sensor to analyse",
-          "target_value": "Value to predict",
+          "min_value": "Lower bound — targeted when the trend is falling",
+          "max_value": "Upper bound — targeted when the trend is rising",
           "time_window": "How many minutes of history to use for regression"
         }
       }

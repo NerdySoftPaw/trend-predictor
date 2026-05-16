@@ -3,15 +3,17 @@
     "step": {
       "user": {
         "title": "Trend Predictor einrichten",
-        "description": "Wähle eine numerische Entität aus und gib an, wann sie ihren Zielwert erreichen soll.",
+        "description": "Wähle eine numerische Entität aus. Der Sensor erkennt automatisch ob der Wert steigt oder fällt und wählt den passenden Zielwert.",
         "data": {
           "source_entity": "Quell-Entität",
-          "target_value": "Zielwert",
+          "min_value": "Minimalwert",
+          "max_value": "Maximalwert",
           "time_window": "Zeitfenster"
         },
         "data_description": {
           "source_entity": "Numerischer Sensor, dessen Verlauf analysiert werden soll (z.B. Batterie-SOC)",
-          "target_value": "Wert, zu dem die Vorhersage berechnet wird (z.B. 0 für leer, 100 für voll)",
+          "min_value": "Unterer Grenzwert – wird angesteuert wenn der Trend fällt (z.B. 0 für leer)",
+          "max_value": "Oberer Grenzwert – wird angesteuert wenn der Trend steigt (z.B. 100 für voll)",
           "time_window": "Wie viele Minuten Verlauf für die Regressionsberechnung genutzt werden"
         }
       }
@@ -29,12 +31,14 @@
         "title": "Trend Predictor anpassen",
         "data": {
           "source_entity": "Quell-Entität",
-          "target_value": "Zielwert",
+          "min_value": "Minimalwert",
+          "max_value": "Maximalwert",
           "time_window": "Zeitfenster"
         },
         "data_description": {
           "source_entity": "Numerischer Sensor, dessen Verlauf analysiert werden soll",
-          "target_value": "Wert, zu dem die Vorhersage berechnet wird",
+          "min_value": "Unterer Grenzwert – wird angesteuert wenn der Trend fällt",
+          "max_value": "Oberer Grenzwert – wird angesteuert wenn der Trend steigt",
           "time_window": "Wie viele Minuten Verlauf für die Regressionsberechnung genutzt werden"
         }
       }

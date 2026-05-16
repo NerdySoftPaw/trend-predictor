@@ -12,7 +12,7 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.event import async_track_state_change_event
 from homeassistant.util import dt as dt_util
 
-from .const import CONF_SOURCE_ENTITY, CONF_TARGET_VALUE, CONF_TIME_WINDOW, DOMAIN
+from .const import CONF_MAX_VALUE, CONF_MIN_VALUE, CONF_SOURCE_ENTITY, CONF_TIME_WINDOW, DOMAIN
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -20,10 +20,11 @@ _LOGGER = logging.getLogger(__name__)
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_entities: AddEntitiesCallback) -> None:
     config = {**entry.data, **entry.options}
     source_entity = config[CONF_SOURCE_ENTITY]
-    target_value = float(config[CONF_TARGET_VALUE])
+    min_value = float(config[CONF_MIN_VALUE])
+    max_value = float(config[CONF_MAX_VALUE])
     time_window = int(config[CONF_TIME_WINDOW])
 
-    data = TrendPredictorData(hass, source_entity, target_value, time_window)
+    data = TrendPredictorData(hass, source_entity, min_value, max_value, time_window)
 
     sensors = [
         TrendPredictorTimeRemainingSensor(data, entry),
@@ -38,10 +39,11 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_e
 class TrendPredictorData:
     """Shared data and history management for one config entry."""
 
-    def __init__(self, hass, source_entity, target_value, time_window_minutes):
+    def __init__(self, hass, source_entity, min_value, max_value, time_window_minutes):
         self.hass = hass
         self.source_entity = source_entity
-        self.target_value = target_value
+        self.min_value = min_value
+        self.max_value = max_value
         self.time_window = time_window_minutes
         self._history: deque[tuple] = deque()
         self._listeners: list = []
@@ -50,6 +52,7 @@ class TrendPredictorData:
         self.rate = None
         self.hours_remaining = None
         self.predicted_time = None
+        self.active_target = None
 
     def register_listener(self, sensor):
         self._listeners.append(sensor)
@@ -108,6 +111,7 @@ class TrendPredictorData:
             self.rate = None
             self.hours_remaining = None
             self.predicted_time = None
+            self.active_target = None
             return
 
         t0 = history[0][0]
@@ -125,20 +129,25 @@ class TrendPredictorData:
             self.rate = None
             self.hours_remaining = None
             self.predicted_time = None
+            self.active_target = None
             return
 
         rate = (n * sum_tv - sum_t * sum_v) / denom
         intercept = (sum_v - rate * sum_t) / n
-
         current_v = rate * times[-1] + intercept
         self.rate = round(rate, 4)
 
         if rate == 0:
             self.hours_remaining = None
             self.predicted_time = None
+            self.active_target = None
             return
 
-        hours = (self.target_value - current_v) / rate
+        # Auto-select target based on trend direction
+        target = self.min_value if rate < 0 else self.max_value
+        self.active_target = target
+
+        hours = (target - current_v) / rate
 
         if hours < 0:
             self.hours_remaining = None
@@ -189,6 +198,10 @@ class TrendPredictorTimeRemainingSensor(_TrendPredictorBaseSensor):
     def native_value(self):
         return self._data.hours_remaining
 
+    @property
+    def extra_state_attributes(self):
+        return {"target": self._data.active_target}
+
 
 class TrendPredictorRateSensor(_TrendPredictorBaseSensor):
     _attr_icon = "mdi:chart-line"
@@ -222,3 +235,7 @@ class TrendPredictorTimestampSensor(_TrendPredictorBaseSensor):
     @property
     def native_value(self):
         return self._data.predicted_time
+
+    @property
+    def extra_state_attributes(self):
+        return {"target": self._data.active_target}
