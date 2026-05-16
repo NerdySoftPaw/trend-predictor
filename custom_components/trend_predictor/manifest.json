@@ -1,11 +1,15 @@
 {
   "domain": "trend_predictor",
   "name": "Trend Predictor",
-  "codeowners": ["@NerdySoftPaw"],
+  "codeowners": [
+    "@NerdySoftPaw"
+  ],
   "config_flow": true,
-  "dependencies": ["recorder"],
+  "dependencies": [
+    "recorder"
+  ],
   "documentation": "https://github.com/NerdySoftPaw/trend-predictor",
   "iot_class": "local_push",
   "issue_tracker": "https://github.com/NerdySoftPaw/trend-predictor/issues",
-  "version": "1.0.0"
+  "version": "2026.5.16"
 }
