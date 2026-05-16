@@ -1,6 +1,6 @@
 site_name: Trend Predictor
 site_description: Home Assistant integration that predicts when any numeric sensor will reach a target value
-site_url: https://nerdysoftpaw.github.io/trend-predictor/
+site_url: https://trend-predictor.readthedocs.io/
 repo_url: https://github.com/NerdySoftPaw/trend-predictor
 repo_name: NerdySoftPaw/trend-predictor
 
