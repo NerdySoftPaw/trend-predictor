@@ -1,5 +1,10 @@
 # Changelog
 
+## 2026.5.16.1
+
+- **Automatische Richtungserkennung:** Kein fixer Zielwert mehr — stattdessen Minimal- und Maximalwert konfigurieren. Die Integration wählt den passenden Zielwert automatisch je nach Trend-Richtung (fallend → Min, steigend → Max)
+- Aktives Ziel als `target`-Attribut am Restzeit- und Zeitpunkt-Sensor
+
 ## 2026.5.16
 
 Erstes Release.

@@ -4,17 +4,17 @@ Trend Predictor ist eine Home Assistant Integration, die für jeden numerischen 
 
 ## Wie es funktioniert
 
-Die Integration beobachtet einen Sensor (z.B. Batterie-SOC in Prozent), analysiert den Verlauf über ein konfigurierbares Zeitfenster und berechnet mittels linearer Regression, wann der Sensor einen eingestellten Zielwert erreicht.
+Die Integration beobachtet einen Sensor (z.B. Batterie-SOC in Prozent), analysiert den Verlauf über ein konfigurierbares Zeitfenster und berechnet mittels linearer Regression, wann der Sensor einen Grenzwert erreicht. Die Richtung wird automatisch erkannt: fällt der Wert, wird der Minimalwert angesteuert; steigt er, der Maximalwert.
 
 ## Die drei Sensoren
 
 | Sensor | Beispielwert | Beschreibung |
 |--------|-------------|--------------|
-| **Restzeit** | `4.2 h` | Stunden bis der Zielwert erreicht wird |
+| **Restzeit** | `4.2 h` | Stunden bis der aktive Zielwert erreicht wird |
 | **Änderungsrate** | `-3.5 %/h` | Aktuelle Änderungsrate pro Stunde |
 | **Voraussichtlicher Zeitpunkt** | `2026-05-16 20:30` | Konkreter Zeitpunkt als Timestamp |
 
-Alle drei Sensoren zeigen `unavailable`, wenn der Trend gerade in die falsche Richtung geht oder zu wenig Datenpunkte vorliegen.
+Alle drei Sensoren zeigen `unavailable`, wenn zu wenig Datenpunkte vorliegen oder kein Trend erkennbar ist. Das aktive Ziel (Min oder Max) ist als Attribut am Restzeit- und Zeitpunkt-Sensor abrufbar.
 
 ## Typische Anwendungsfälle
 

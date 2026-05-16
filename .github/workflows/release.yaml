@@ -31,7 +31,12 @@ jobs:
             YEAR=$(echo "$TAG_VERSION" | cut -d. -f1)
             MONTH=$(echo "$TAG_VERSION" | cut -d. -f2 | sed 's/^0*//')
             DAY=$(echo "$TAG_VERSION" | cut -d. -f3 | sed 's/^0*//')
-            MANIFEST_VERSION="${YEAR}.${MONTH}.${DAY}"
+            PATCH=$(echo "$TAG_VERSION" | cut -d. -f4)
+            if [ -n "$PATCH" ]; then
+              MANIFEST_VERSION="${YEAR}.${MONTH}.${DAY}.${PATCH}"
+            else
+              MANIFEST_VERSION="${YEAR}.${MONTH}.${DAY}"
+            fi
           fi
           echo "Setting version to $MANIFEST_VERSION (from tag $TAG_VERSION)"
           jq --arg v "$MANIFEST_VERSION" '.version = $v' custom_components/trend_predictor/manifest.json > tmp.json

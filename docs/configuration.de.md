@@ -7,18 +7,24 @@ Die Konfiguration erfolgt vollständig über die Home Assistant UI — kein YAML
 | Parameter | Typ | Standard | Beschreibung |
 |-----------|-----|---------|--------------|
 | **Quell-Entität** | Entity ID | — | Numerischer Sensor, dessen Verlauf analysiert wird |
-| **Zielwert** | Zahl | `0` | Wert, zu dem die Vorhersage berechnet wird |
+| **Minimalwert** | Zahl | `0` | Unterer Grenzwert – wird angesteuert wenn der Trend fällt |
+| **Maximalwert** | Zahl | `100` | Oberer Grenzwert – wird angesteuert wenn der Trend steigt |
 | **Zeitfenster** | Minuten | `30` | Wie viel Verlauf für die Berechnung genutzt wird |
 
 ## Quell-Entität
 
 Es werden Entitäten vom Typ `sensor` und `input_number` unterstützt. Der aktuelle Zustand muss ein numerischer Wert sein (kein `unknown` oder `unavailable`).
 
-## Zielwert
+## Automatische Richtungserkennung
 
-- Für "wann ist die Batterie leer?" → `0`
-- Für "wann ist die Batterie voll?" → `100`
-- Beliebige andere Werte möglich (z.B. Mindestfüllstand, kritische Temperatur)
+Die Integration erkennt die Trend-Richtung automatisch und wählt den passenden Zielwert:
+
+- **Trend fällt** (Rate < 0) → Vorhersage bis zum **Minimalwert**
+- **Trend steigt** (Rate > 0) → Vorhersage bis zum **Maximalwert**
+
+Kein manuelles Umschalten nötig. Wenn eine PV-Batterie entlädt, zeigen die Sensoren wann sie auf 0% fällt. Sobald sie lädt, wechseln sie automatisch auf die Vorhersage bis 100%.
+
+Das aktuell aktive Ziel ist als `target`-Attribut am Restzeit- und Zeitpunkt-Sensor abrufbar.
 
 ## Zeitfenster
 

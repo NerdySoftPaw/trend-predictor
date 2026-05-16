@@ -7,18 +7,24 @@ All configuration is done through the Home Assistant UI — no YAML required.
 | Parameter | Type | Default | Description |
 |-----------|------|---------|-------------|
 | **Source entity** | Entity ID | — | Numeric sensor whose history is analysed |
-| **Target value** | Number | `0` | Value the prediction is calculated towards |
+| **Minimum value** | Number | `0` | Lower bound — predicted when the trend is falling |
+| **Maximum value** | Number | `100` | Upper bound — predicted when the trend is rising |
 | **Time window** | Minutes | `30` | How much history is used for the calculation |
 
 ## Source entity
 
 Entities of type `sensor` and `input_number` are supported. The current state must be a numeric value (not `unknown` or `unavailable`).
 
-## Target value
+## Automatic direction detection
 
-- "When will the battery be empty?" → `0`
-- "When will the battery be full?" → `100`
-- Any other value works too (e.g. minimum fill level, critical temperature)
+The integration detects the trend direction automatically and picks the right target:
+
+- **Trend is falling** (rate < 0) → predicts time until **minimum value**
+- **Trend is rising** (rate > 0) → predicts time until **maximum value**
+
+No manual switching needed. If a PV battery is discharging, the sensors predict when it will reach 0%. Once it starts charging, they automatically switch to predicting when it will reach 100%.
+
+The currently active target is exposed as a `target` attribute on the time remaining and predicted time sensors.
 
 ## Time window
 
