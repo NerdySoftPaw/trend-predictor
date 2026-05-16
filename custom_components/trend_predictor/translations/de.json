@@ -1,0 +1,56 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Trend Predictor einrichten",
+        "description": "Wähle eine numerische Entität aus und gib an, wann sie ihren Zielwert erreichen soll.",
+        "data": {
+          "source_entity": "Quell-Entität",
+          "target_value": "Zielwert",
+          "time_window": "Zeitfenster"
+        },
+        "data_description": {
+          "source_entity": "Numerischer Sensor, dessen Verlauf analysiert werden soll (z.B. Batterie-SOC)",
+          "target_value": "Wert, zu dem die Vorhersage berechnet wird (z.B. 0 für leer, 100 für voll)",
+          "time_window": "Wie viele Minuten Verlauf für die Regressionsberechnung genutzt werden"
+        }
+      }
+    },
+    "error": {
+      "already_configured": "Diese Entität wird bereits überwacht"
+    },
+    "abort": {
+      "already_configured": "Diese Entität ist bereits konfiguriert"
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Trend Predictor anpassen",
+        "data": {
+          "source_entity": "Quell-Entität",
+          "target_value": "Zielwert",
+          "time_window": "Zeitfenster"
+        },
+        "data_description": {
+          "source_entity": "Numerischer Sensor, dessen Verlauf analysiert werden soll",
+          "target_value": "Wert, zu dem die Vorhersage berechnet wird",
+          "time_window": "Wie viele Minuten Verlauf für die Regressionsberechnung genutzt werden"
+        }
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "time_remaining": {
+        "name": "Restzeit"
+      },
+      "rate": {
+        "name": "Änderungsrate"
+      },
+      "predicted_time": {
+        "name": "Voraussichtlicher Zeitpunkt"
+      }
+    }
+  }
+}

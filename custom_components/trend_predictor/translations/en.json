@@ -1,0 +1,56 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Set up Trend Predictor",
+        "description": "Select a numeric entity and specify which target value to predict.",
+        "data": {
+          "source_entity": "Source entity",
+          "target_value": "Target value",
+          "time_window": "Time window"
+        },
+        "data_description": {
+          "source_entity": "Numeric sensor to analyse (e.g. battery state of charge)",
+          "target_value": "Value to predict (e.g. 0 for empty, 100 for full)",
+          "time_window": "How many minutes of history to use for regression"
+        }
+      }
+    },
+    "error": {
+      "already_configured": "This entity is already being monitored"
+    },
+    "abort": {
+      "already_configured": "This entity is already configured"
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Reconfigure Trend Predictor",
+        "data": {
+          "source_entity": "Source entity",
+          "target_value": "Target value",
+          "time_window": "Time window"
+        },
+        "data_description": {
+          "source_entity": "Numeric sensor to analyse",
+          "target_value": "Value to predict",
+          "time_window": "How many minutes of history to use for regression"
+        }
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "time_remaining": {
+        "name": "Time remaining"
+      },
+      "rate": {
+        "name": "Rate of change"
+      },
+      "predicted_time": {
+        "name": "Predicted time"
+      }
+    }
+  }
+}

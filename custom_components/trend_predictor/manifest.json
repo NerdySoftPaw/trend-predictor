@@ -1,0 +1,11 @@
+{
+  "domain": "trend_predictor",
+  "name": "Trend Predictor",
+  "codeowners": ["@NerdySoftPaw"],
+  "config_flow": true,
+  "dependencies": ["recorder"],
+  "documentation": "https://github.com/NerdySoftPaw/trend-predictor",
+  "iot_class": "local_push",
+  "issue_tracker": "https://github.com/NerdySoftPaw/trend-predictor/issues",
+  "version": "1.0.0"
+}

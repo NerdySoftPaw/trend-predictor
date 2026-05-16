@@ -1,0 +1,67 @@
+name: Release
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    name: Prepare Release
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.release.target_commitish }}
+
+      - name: Set version from tag
+        run: |
+          TAG_VERSION=${GITHUB_REF#refs/tags/v}
+          if [[ "$TAG_VERSION" == *"-beta."* ]]; then
+            BASE=$(echo "$TAG_VERSION" | sed 's/-beta\..*//')
+            BETA_NUM=$(echo "$TAG_VERSION" | sed 's/.*-beta\.//')
+            YEAR=$(echo "$BASE" | cut -d. -f1)
+            MONTH=$(echo "$BASE" | cut -d. -f2 | sed 's/^0*//')
+            DAY=$(echo "$BASE" | cut -d. -f3 | sed 's/^0*//')
+            MANIFEST_VERSION="${YEAR}.${MONTH}.${DAY}b${BETA_NUM}"
+          else
+            YEAR=$(echo "$TAG_VERSION" | cut -d. -f1)
+            MONTH=$(echo "$TAG_VERSION" | cut -d. -f2 | sed 's/^0*//')
+            DAY=$(echo "$TAG_VERSION" | cut -d. -f3 | sed 's/^0*//')
+            MANIFEST_VERSION="${YEAR}.${MONTH}.${DAY}"
+          fi
+          echo "Setting version to $MANIFEST_VERSION (from tag $TAG_VERSION)"
+          jq --arg v "$MANIFEST_VERSION" '.version = $v' custom_components/trend_predictor/manifest.json > tmp.json
+          mv tmp.json custom_components/trend_predictor/manifest.json
+
+      - name: Commit version to repo
+        run: |
+          BRANCH=${{ github.event.release.target_commitish }}
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add custom_components/trend_predictor/manifest.json
+          git diff --cached --quiet && echo "No changes" || git commit -m "Set version to ${GITHUB_REF#refs/tags/v}"
+          git push origin HEAD:${BRANCH}
+
+      - name: Update tag to include version commit
+        run: |
+          git tag -f ${GITHUB_REF#refs/tags/}
+          git push origin ${GITHUB_REF#refs/tags/} --force
+
+      - name: Create zip file
+        run: |
+          cd custom_components
+          zip -r ../trend_predictor.zip trend_predictor/
+
+      - name: Upload release asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: ./trend_predictor.zip
+          asset_name: trend_predictor.zip
+          asset_content_type: application/zip
