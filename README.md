@@ -4,14 +4,14 @@
 [![HACS Validation](https://img.shields.io/github/actions/workflow/status/NerdySoftPaw/trend-predictor/hacs.yaml?label=HACS&style=flat-square)](https://github.com/NerdySoftPaw/trend-predictor/actions/workflows/hacs.yaml)
 [![Code Quality](https://img.shields.io/github/actions/workflow/status/NerdySoftPaw/trend-predictor/lint.yaml?label=lint&style=flat-square)](https://github.com/NerdySoftPaw/trend-predictor/actions/workflows/lint.yaml)
 [![Tests](https://img.shields.io/github/actions/workflow/status/NerdySoftPaw/trend-predictor/tests.yaml?label=tests&style=flat-square)](https://github.com/NerdySoftPaw/trend-predictor/actions/workflows/tests.yaml)
-[![Docs](https://img.shields.io/readthedocs/trend-predictor?style=flat-square)](https://trend-predictor.readthedocs.io)
+[![Docs](https://img.shields.io/badge/docs-GitHub%20Pages-blue?style=flat-square)](https://nerdysoftpaw.github.io/trend-predictor/)
 [![License](https://img.shields.io/github/license/NerdySoftPaw/trend-predictor?style=flat-square)](LICENSE)
 
 A Home Assistant integration that predicts when any numeric sensor will reach a target value — based on its current trend.
 
 No more manual calculation of "how long until my PV battery is empty". Set it up once and Home Assistant tells you.
 
-**[→ Full Documentation](https://trend-predictor.readthedocs.io)**
+**[→ Full Documentation](https://nerdysoftpaw.github.io/trend-predictor/)**
 
 ---
 
@@ -87,7 +87,7 @@ automation:
             Expected to run out at {{ states('sensor.battery_soc_predicted_time') }}.
 ```
 
-More examples in the [documentation](https://trend-predictor.readthedocs.io/en/latest/automations/).
+More examples in the [documentation](https://nerdysoftpaw.github.io/trend-predictor/automations/).
 
 ## Contributing
 
