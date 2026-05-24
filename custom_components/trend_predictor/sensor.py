@@ -98,6 +98,8 @@ class TrendPredictorData:
 
         self._unsubscribe = async_track_state_change_event(self.hass, [self.source_entity], self._on_state_change)
         self._recalculate()
+        for sensor in self._listeners:
+            sensor.async_write_ha_state()
 
     def async_stop(self):
         if self._unsubscribe:

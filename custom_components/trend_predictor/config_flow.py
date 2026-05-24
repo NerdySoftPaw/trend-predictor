@@ -57,7 +57,7 @@ class TrendPredictorConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
                 er = async_get_entity_registry(self.hass)
                 entry = er.async_get(entity_id)
-                name = entry.name or entry.original_name if entry else entity_id
+                name = (entry.name or entry.original_name) if entry else entity_id
 
                 return self.async_create_entry(
                     title=f"{name} ({min_v}–{max_v})",
