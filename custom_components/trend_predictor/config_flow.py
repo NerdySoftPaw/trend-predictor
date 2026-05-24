@@ -44,25 +44,30 @@ class TrendPredictorConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     VERSION = 1
 
     async def async_step_user(self, user_input=None):
+        errors = {}
         if user_input is not None:
-            entity_id = user_input[CONF_SOURCE_ENTITY]
-            await self.async_set_unique_id(entity_id)
-            self._abort_if_unique_id_configured()
-
-            er = async_get_entity_registry(self.hass)
-            entry = er.async_get(entity_id)
-            name = entry.name or entry.original_name if entry else entity_id
             min_v = user_input[CONF_MIN_VALUE]
             max_v = user_input[CONF_MAX_VALUE]
+            if float(min_v) >= float(max_v):
+                errors["base"] = "min_max_invalid"
+            else:
+                entity_id = user_input[CONF_SOURCE_ENTITY]
+                await self.async_set_unique_id(entity_id)
+                self._abort_if_unique_id_configured()
 
-            return self.async_create_entry(
-                title=f"{name} ({min_v}–{max_v})",
-                data=user_input,
-            )
+                er = async_get_entity_registry(self.hass)
+                entry = er.async_get(entity_id)
+                name = entry.name or entry.original_name if entry else entity_id
+
+                return self.async_create_entry(
+                    title=f"{name} ({min_v}–{max_v})",
+                    data=user_input,
+                )
 
         return self.async_show_form(
             step_id="user",
-            data_schema=_build_schema({}),
+            data_schema=_build_schema(user_input or {}),
+            errors=errors,
         )
 
     @staticmethod
@@ -75,10 +80,15 @@ class TrendPredictorOptionsFlow(config_entries.OptionsFlow):
         self._config_entry = config_entry
 
     async def async_step_init(self, user_input=None):
+        errors = {}
         if user_input is not None:
-            return self.async_create_entry(data=user_input)
+            if float(user_input[CONF_MIN_VALUE]) >= float(user_input[CONF_MAX_VALUE]):
+                errors["base"] = "min_max_invalid"
+            else:
+                return self.async_create_entry(data=user_input)
 
         return self.async_show_form(
             step_id="init",
-            data_schema=_build_schema({**self._config_entry.data, **self._config_entry.options}),
+            data_schema=_build_schema(user_input or {**self._config_entry.data, **self._config_entry.options}),
+            errors=errors,
         )
