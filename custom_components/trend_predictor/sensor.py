@@ -2,6 +2,7 @@ import logging
 from collections import deque
 from datetime import timedelta
 
+from homeassistant.components.persistent_notification import async_create as async_create_notification
 from homeassistant.components.recorder import get_instance
 from homeassistant.components.recorder.history import get_significant_states
 from homeassistant.components.sensor import SensorDeviceClass, SensorEntity, SensorStateClass
@@ -31,6 +32,16 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_e
             max_value,
         )
         min_value, max_value = max_value, min_value
+        async_create_notification(
+            hass,
+            title="Trend Predictor: Configuration corrected",
+            message=(
+                f"**{entry.title}**: Minimum value was greater than or equal to maximum value. "
+                f"The values have been swapped automatically. "
+                f"Please reconfigure this entry to fix it permanently."
+            ),
+            notification_id=f"{DOMAIN}_min_max_swap_{entry.entry_id}",
+        )
 
     data = TrendPredictorData(hass, source_entity, min_value, max_value, time_window)
 
