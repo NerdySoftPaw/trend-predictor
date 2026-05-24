@@ -11,6 +11,9 @@ Die Konfiguration erfolgt vollständig über die Home Assistant UI — kein YAML
 | **Maximalwert** | Zahl | `100` | Oberer Grenzwert – wird angesteuert wenn der Trend steigt |
 | **Zeitfenster** | Minuten | `30` | Wie viel Verlauf für die Berechnung genutzt wird |
 
+!!! warning
+    Der Minimalwert muss **kleiner** als der Maximalwert sein. Die Benutzeroberfläche zeigt eine Fehlermeldung, wenn die Werte vertauscht eingegeben werden. Bereits gespeicherte Einträge mit vertauschten Werten werden beim nächsten HA-Neustart automatisch korrigiert.
+
 ## Quell-Entität
 
 Es werden Entitäten vom Typ `sensor` und `input_number` unterstützt. Der aktuelle Zustand muss ein numerischer Wert sein (kein `unknown` oder `unavailable`).

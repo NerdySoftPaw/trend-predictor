@@ -11,6 +11,9 @@ All configuration is done through the Home Assistant UI — no YAML required.
 | **Maximum value** | Number | `100` | Upper bound — predicted when the trend is rising |
 | **Time window** | Minutes | `30` | How much history is used for the calculation |
 
+!!! warning
+    Minimum value must be **less than** maximum value. The UI will show an error if you enter them the wrong way around. Existing entries with swapped values are automatically corrected on the next HA restart.
+
 ## Source entity
 
 Entities of type `sensor` and `input_number` are supported. The current state must be a numeric value (not `unknown` or `unavailable`).

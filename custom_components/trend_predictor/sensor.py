@@ -2,6 +2,7 @@ import logging
 from collections import deque
 from datetime import timedelta
 
+from homeassistant.components.persistent_notification import async_create as async_create_notification
 from homeassistant.components.recorder import get_instance
 from homeassistant.components.recorder.history import get_significant_states
 from homeassistant.components.sensor import SensorDeviceClass, SensorEntity, SensorStateClass
@@ -9,7 +10,7 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
-from homeassistant.helpers.event import async_track_state_change_event
+from homeassistant.helpers.event import async_call_later, async_track_state_change_event
 from homeassistant.util import dt as dt_util
 
 from .const import CONF_MAX_VALUE, CONF_MIN_VALUE, CONF_SOURCE_ENTITY, CONF_TIME_WINDOW, DOMAIN
@@ -23,6 +24,24 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_e
     min_value = float(config[CONF_MIN_VALUE])
     max_value = float(config[CONF_MAX_VALUE])
     time_window = int(config[CONF_TIME_WINDOW])
+
+    if min_value >= max_value:
+        _LOGGER.warning(
+            "min_value (%s) must be less than max_value (%s); swapping values",
+            min_value,
+            max_value,
+        )
+        min_value, max_value = max_value, min_value
+        async_create_notification(
+            hass,
+            title="Trend Predictor: Configuration corrected",
+            message=(
+                f"**{entry.title}**: Minimum value was greater than or equal to maximum value. "
+                f"The values have been swapped automatically. "
+                f"Please reconfigure this entry to fix it permanently."
+            ),
+            notification_id=f"{DOMAIN}_min_max_swap_{entry.entry_id}",
+        )
 
     data = TrendPredictorData(hass, source_entity, min_value, max_value, time_window)
 
@@ -48,6 +67,7 @@ class TrendPredictorData:
         self._history: deque[tuple] = deque()
         self._listeners: list = []
         self._unsubscribe = None
+        self._debounce_unsub = None
 
         self.rate = None
         self.hours_remaining = None
@@ -78,10 +98,14 @@ class TrendPredictorData:
 
         self._unsubscribe = async_track_state_change_event(self.hass, [self.source_entity], self._on_state_change)
         self._recalculate()
+        for sensor in self._listeners:
+            sensor.async_write_ha_state()
 
     def async_stop(self):
         if self._unsubscribe:
             self._unsubscribe()
+        if self._debounce_unsub:
+            self._debounce_unsub()
 
     @callback
     def _on_state_change(self, event):
@@ -100,8 +124,14 @@ class TrendPredictorData:
         while self._history and self._history[0][0] < cutoff:
             self._history.popleft()
 
-        self._recalculate()
+        if self._debounce_unsub is not None:
+            self._debounce_unsub()
+        self._debounce_unsub = async_call_later(self.hass, 1, self._debounced_recalculate)
 
+    @callback
+    def _debounced_recalculate(self, _now):
+        self._debounce_unsub = None
+        self._recalculate()
         for sensor in self._listeners:
             sensor.async_write_ha_state()
 

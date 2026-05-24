@@ -19,13 +19,17 @@
       }
     },
     "error": {
-      "already_configured": "This entity is already being monitored"
+      "already_configured": "This entity is already being monitored",
+      "min_max_invalid": "Minimum value must be less than maximum value"
     },
     "abort": {
       "already_configured": "This entity is already configured"
     }
   },
   "options": {
+    "error": {
+      "min_max_invalid": "Minimum value must be less than maximum value"
+    },
     "step": {
       "init": {
         "title": "Reconfigure Trend Predictor",

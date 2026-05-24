@@ -19,13 +19,17 @@
       }
     },
     "error": {
-      "already_configured": "Diese Entität wird bereits überwacht"
+      "already_configured": "Diese Entität wird bereits überwacht",
+      "min_max_invalid": "Minimalwert muss kleiner als der Maximalwert sein"
     },
     "abort": {
       "already_configured": "Diese Entität ist bereits konfiguriert"
     }
   },
   "options": {
+    "error": {
+      "min_max_invalid": "Minimalwert muss kleiner als der Maximalwert sein"
+    },
     "step": {
       "init": {
         "title": "Trend Predictor anpassen",
